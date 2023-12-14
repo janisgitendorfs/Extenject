@@ -273,49 +273,7 @@ namespace Zenject
 
         protected void InstallSceneBindings(List<MonoBehaviour> injectableMonoBehaviours)
         {
-            foreach (var binding in injectableMonoBehaviours.OfType<ZenjectBinding>())
-            {
-                if (binding == null)
-                {
-                    continue;
-                }
 
-                if (binding.Context == null || (binding.UseSceneContext && this is SceneContext))
-                {
-                    binding.Context = this;
-                }
-            }
-
-            // TODO: Consider changing this
-            // Maybe ZenjectBinding could add itself to a registry class on Awake/OnEnable
-            // then we could avoid calling the slow Resources.FindObjectsOfTypeAll here
-#if UNITY_2020_1_OR_NEWER
-            foreach (var binding in FindObjectsOfType<ZenjectBinding>(true))
-#else
-            foreach (var binding in Resources.FindObjectsOfTypeAll<ZenjectBinding>())
-#endif
-            {
-                if (binding == null)
-                {
-                    continue;
-                }
-
-                // This is necessary for cases where the ZenjectBinding is inside a GameObjectContext
-                // since it won't be caught in the other loop above
-                if (this is SceneContext)
-                {
-                    if (binding.Context == null && binding.UseSceneContext
-                                                && binding.gameObject.scene == gameObject.scene)
-                    {
-                        binding.Context = this;
-                    }
-                }
-
-                if (binding.Context == this)
-                {
-                    InstallZenjectBinding(binding);
-                }
-            }
         }
 
         void InstallZenjectBinding(ZenjectBinding binding)
