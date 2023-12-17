@@ -200,6 +200,16 @@ namespace Zenject
             _container.Bind<Context>().FromInstance(this);
             _container.Bind<GameObjectContext>().FromInstance(this);
 
+            if (_kernel == null)
+            {
+                _container.Bind<MonoKernel>()
+                    .To<DefaultGameObjectKernel>().FromNewComponentOn(gameObject).AsSingle().NonLazy();
+            }
+            else
+            {
+                _container.Bind<MonoKernel>().FromInstance(_kernel).AsSingle().NonLazy();
+            }
+
             InstallSceneBindings(injectableMonoBehaviours);
             InstallInstallers();
         }
